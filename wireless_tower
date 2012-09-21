@@ -1,0 +1,38 @@
+-- Code by zypherking
+-- Basic gps tower system
+
+local comID, msg ,dist
+local Cmaster
+
+
+while true do
+	comID, msg, dist = rs.receive(10)
+	
+	if msg == "1101" then
+		rs.send(comID, "beep")
+		
+	else if msg == "Mcall" then
+		
+		
+		if not fs.exists("master")
+			fs.makeDir("master")
+		end
+		
+		m = fs.open("master", "a")
+		 Cmaster = m.readLines
+		
+		if Cmaster == nil then
+			
+			m.write( comID )
+			
+		else
+		
+		rs.send(Cmaster,"Responding to Master \n")
+		
+		end
+		
+	end
+	
+end
+	
+	

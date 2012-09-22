@@ -1,0 +1,93 @@
+-- Code by zypherking
+-- Basic gps tower system
+
+--[[
+
+	Tower commands turtles can request.
+	- To get range turtle sends -> "range"
+	- gps tower ids turtle sends -> "ids"
+	-if turtle needs help send ->"help"
+	- testing -> "test"
+	- Master computer control request turtles locations master sends -> Mcall
+	
+	All the commands are put in the msg the turtle needs to send.
+	
+
+]]
+
+local comID, msg ,dist
+local Tower_name
+local M_id
+
+function TowName()
+
+	if Tower_name == nil then
+		
+		if not fs.exsits("tname") then
+		write("please enter towers name \n")
+		Tower_name = read()
+		tn = fs.open("tname","w")
+		tn.write(Tower_name)
+		tn.close()
+		else
+		tn= fs.open("tname", "r")
+		Tower_name = tn.readLine()
+		
+	end
+
+
+end
+
+
+
+while true do
+
+	TowName()
+	
+	write("Wireless gps server is running")
+	
+	comID, msg, dist = rs.receive(10)
+	
+	-- Command for test
+	
+	if msg == "test" then
+		rednet.send(comID, "beep")
+		
+		--Command for master
+		
+	elseif msg == "Mcall" then
+		
+		if not fs.exists("master") then
+			
+			m= fs.open("master", "w")
+			m.write( comID )
+			m.close()
+			
+		end
+		m = fs.open("master")
+		
+		rednet.send(comID,"Masters ID is"..m.readLine())
+		
+		--command for range
+		
+	elseif msg == "range" then
+		rednet.send(comID, Tower_name .. dist)
+		
+		-- Command for ids
+		
+	elseif msg == "ids" then
+		
+		rednet.send(comID, Tower_name )
+		
+	elseif msg == "help" then
+		
+		m= fs.open("master", "r")
+		M_id = m.readLine()
+		rednet.send(M_id, " Turtle with id <".. comID .."> called help")
+		m.close()
+		
+	end
+	
+end
+	
+	
